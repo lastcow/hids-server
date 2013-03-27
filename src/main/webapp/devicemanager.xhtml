@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:composition template="WEB-INF/templates/main.xhtml">
+        <ui:define name="customeCSS">
+            <link rel="stylesheet" href="#{request.contextPath}/resources/css/styles/table.css?v=1" />
+            <!-- DataTables -->
+            <link rel="stylesheet" href="#{request.contextPath}/resources/js/libs/DataTables/jquery.dataTables.css?v=1" />
+        </ui:define>
+        <ui:define name="customeJS">
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/libs/jquery.tablesorter.min.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/libs/DataTables/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/devicemanager.js"></script>
+        </ui:define>
+
+        <ui:define name="main">
+
+            <hgroup id="main-title" class="thin">
+                <h1>Device list</h1>
+            </hgroup>
+
+            <h:panelGroup layout="block" styleClass="with-padding">
+                <h:form prependId="false">
+                    <h:inputHidden value="#{deviceController.deviceList.size()}" id="deviceCnt" >
+                        <f:convertNumber />
+                    </h:inputHidden>
+                </h:form>
+                <h:dataTable id="tblDevice" prependId="false" value="#{deviceController.deviceList}" var="device"
+                        styleClass="table responsive-table"
+                        columnClasses="columnDeviceId, columnDeviceSerial, columnDeviceModel, columnDeviceManufacturer, columnDeviceCodename, columnDeviceInfected, columnDeviceAction">
+                    <h:column>
+                        <f:facet name="header">Build#</f:facet>
+                        <h:outputText value="#{device.deviceLabel}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Device Serial</f:facet>
+                        <h:outputText value="#{device.deviceSerial}"></h:outputText>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Device Model</f:facet>
+                        <h:outputText value="#{device.deviceModel}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Device Manufacturer</f:facet>
+                        <h:outputText value="#{device.manufacturer}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Device Codename</f:facet>
+                        <h:outputText value="#{device.codeName}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Infected</f:facet>
+                        <small class="tag green-bg">Clean</small>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Actions</f:facet>
+                        <h:form prependId="false">
+                            <span class="button-group compact">
+                                <h:commandLink action="#{deviceController.doPrepareDetailedInformation(device.deviceSerial)}"
+                                        styleClass="button icon-pencil with-tooltip" title="Show device information">
+                                    Detail
+                                    <f:ajax execute="@form" onevent="function(data) {getDeviceDetail(data);}" render=":divDeviceInfo :divApps" />
+                                </h:commandLink>
+                                <h:commandLink action="#{deviceController.doGetDeviceInfo(device.deviceSerial)}"
+                                               styleClass="button icon-inbox with-tooltip" title="Fetching Device Info">
+                                    <f:ajax execute="@form" render=":tblDevice"/>
+                                </h:commandLink>
+                                <h:commandLink action="#{deviceController.doScanApplication('a', 'b')}" styleClass="button icon-page-list with-tooltip" title="Not using for now">
+                                    <f:ajax execute="@form" />
+                                </h:commandLink>
+                            </span>
+                        </h:form>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+
+            <!--/* Device details */-->
+            <hgroup id="details-title" class="thin" style="display: none;">
+                <h1>Device details</h1>
+            </hgroup>
+
+            <h:panelGroup id="divDeviceDetails" layout="block" styleClass="with-padding" style="display: none;">
+                <h:panelGroup layout="block" styleClass="columns">
+                    <h:panelGroup id="divDeviceInfo" layout="block" styleClass="twelve-columns">
+                        <h3 class="thin underline">Information</h3>
+
+                        <div class="facts clearfix">
+                            <div class="fact">
+							<span class="fact-value">
+								<h:outputText value="#{deviceController.actionDevice.usedCapacity*100/deviceController.actionDevice.totalCapacity}">
+                                    <f:convertNumber maxFractionDigits="0" />
+								</h:outputText> <span class="fact-unit">%</span>
+							</span>
+                                disk used over<br />
+                                <span class="fact-progress green"><h:outputText value="#{deviceController.actionDevice.totalCapacity}" >
+                                        <f:convertNumber />
+                                    </h:outputText>GB
+                                </span>
+                            </div>
+
+                            <div class="fact">
+							<span class="fact-value red">
+								0 <span class="fact-unit"></span>
+							</span>
+                                apps affected over<br />
+                                <span class="fact-progress green">
+                                    <h:outputText
+                                        value="#{deviceController.deviceInstalledApplicationList.size()}">
+                                    <f:convertNumber  />
+                                </h:outputText> Apps</span>
+                            </div>
+                        </div>
+
+                    </h:panelGroup>
+                    <h:panelGroup id="divApps" layout="block" styleClass="six-columns twelve-columns-tablet">
+                        <h3 class="thin underline">Applications</h3>
+
+                        <!--Simple table for installed applications-->
+                        <h:form prependId="false">
+                            <h:inputHidden id="installedAppsCnt" value="#{deviceController.deviceInstalledApplicationList.size()}">
+                                <f:convertNumber />
+                            </h:inputHidden>
+                            <h:inputHidden id="runningAppsCnt" value="#{deviceController.deviceRunningApplicationList.size()}">
+                                <f:convertNumber />
+                            </h:inputHidden>
+                        </h:form>
+
+                        <div class="standard-tabs margin-bottom">
+
+                            <ul class="tabs">
+                                <li class="active"><a href="#tab-1">Installed Applications</a></li>
+                                <li><a href="#tab-2">Running Applications</a></li>
+                            </ul>
+
+                            <div class="tabs-content">
+                                <div id="tab-1" class="with-padding">
+                                    <h:dataTable id="tblInstalledApps" prependId="false" value="#{deviceController.deviceInstalledApplicationList}" var="app"
+                                                 styleClass="table responsive-table"
+                                                 columnClasses="columnInstalledAppInfected, null, null, columnInstalledAppActions">
+                                        <h:column>
+                                            <f:facet name="header">Virus</f:facet>
+                                            <small class="tag orange-bg">Unscan</small>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Name</f:facet>
+                                            <h:outputText value="#{app.name}" />
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Version</f:facet>
+                                            <h:outputText value="#{app.versionNumber}"></h:outputText>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header"></f:facet>
+                                            <h:form prependId="false">
+                                                <span class="button-group compact">
+                                                    <h:commandLink action="#{deviceController.doScanApplication(app.device2.deviceSerial, app.name)}"
+                                                                   styleClass="button icon-swap with-tooltip" title="Scan Application">
+                                                        <f:ajax execute="@form" />
+                                                    </h:commandLink>
+                                                </span>
+                                            </h:form>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+
+                                <div id="tab-2" class="with-padding" style="display:none;">
+                                    <!--Simple table for running applications-->
+                                    <h:dataTable id="tblRunningApps" prependId="false" value="#{deviceController.deviceRunningApplicationList}" var="runningApp"
+                                                 styleClass="table responsive-table">
+                                        <h:column>
+                                            <f:facet name="header">Name</f:facet>
+                                            <h:outputText value="#{runningApp.name}" />
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Process</f:facet>
+                                            <h:outputText value="#{runningApp.processName}" />
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup id="historyBlock" layout="block" styleClass="six-columns twelve-columns-tablet">
+                        <h3 class="thin underline">History</h3>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:panelGroup>
+
+        </ui:define>
+    </ui:composition>
+
+</html>
