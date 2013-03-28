@@ -8,6 +8,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  */
 
 @Stateless
-public class DeviceDbHelper {
+public class DeviceDbHelper implements Serializable {
 
     @Inject
     private Logger log;

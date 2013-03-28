@@ -111,17 +111,45 @@ function initTblRunningApps(){
 
 }
 
-function getDeviceDetail(data){
+/**
+ * Get device information from DB.
+ * @param data
+ * @param deviceSerial
+ */
+function getDeviceDetail(data, deviceSerial){
     if(data.status == "begin"){
         // Loading...
     }else if(data.status == "success" ){
+        // Set device serial on page
+        $('#selectedDeviceSerial').val(deviceSerial);
+
+        // Init table style
         initTblInstalledApps();
         initTblRunningApps();
+
         // Show div
         $('#details-title').show();
         $('#divDeviceDetails').show();
     }else if(data.status == "complete"){
 
+    }
+}
+
+/**
+ * Prepare scan app data and submit request.
+ * @param data
+ * @param appId
+ */
+function prepareScanAppData(data, appId){
+    if(data.status == "begin"){
+        // Loading...
+    }else if(data.status == "success"){
+
+        $('#selectedAppId').val(appId);
+        // Submit the scan request.
+        $('#submitAppScan').click();
+    }else if(data.status == "complete"){
+        // Complete
     }
 }
 

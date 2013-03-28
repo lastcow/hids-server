@@ -9,6 +9,7 @@ import org.jboss.solder.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Model
-public class DeviceController {
+public class DeviceController implements Serializable {
 
     @Inject
     Logger logger;
@@ -40,23 +41,29 @@ public class DeviceController {
 
     private Device actionDevice;
 
+    private String selectedDeviceSerial;
+    private String selectedAppid;
+
     @PostConstruct
     public void postInit(){
+        logger.info("CALLED");
         // Get list of device.
         deviceList = deviceDbHelper.getDeviceList();
+
         deviceInstalledApplicationList = new ArrayList<DeviceApplication>();
         deviceRunningApplicationList = new ArrayList<DeviceApplication>();
+
     }
 
     /**
      * Get device detailed information
-     * @param deviceId
+     * @param device
      */
-    public void doGetDeviceInfo(String deviceId){
+    public void doGetDeviceInfo(Device device){
 
-        logger.info("Getting device information for: " + deviceId);
-        if(deviceId != null){
-            actionDevice = deviceDbHelper.getDeviceById(deviceId);
+        logger.info("Getting device information for: " + device.getDeviceSerial());
+        if(device != null){
+            actionDevice = device;
 
             // Get device information.
             gcmService.doGetDeviceInfo(actionDevice);
@@ -72,24 +79,29 @@ public class DeviceController {
 
     /**
      * Scan application
-     * @param deviceId
-     * @param appProcessName
      */
-    public void doScanApplication(String deviceId, String appProcessName){
+    public void doScanApplication(){
 
-        logger.info("Scan requested for process: " + appProcessName);
-        gcmService.doScanApplication(deviceDbHelper.getDeviceById(deviceId), appProcessName);
+        logger.info("Scan requested for process: " + selectedAppid + " on device: " + selectedDeviceSerial);
+//        gcmService.doScanApplication(deviceDbHelper.getDeviceById(deviceId), appProcessName);
+    }
+
+    /**
+     * Never called from webpage.
+     */
+    public void doSacnPrepare(){
+
     }
 
     /**
      * Prepare device's details.
-     * @param deviceId
+     * @param device
      */
-    public void doPrepareDetailedInformation(String deviceId){
+    public void doPrepareDetailedInformation(Device device){
 
-        logger.info("Preparing device information for: " + deviceId);
-        // Get actionDevice
-        actionDevice = deviceDbHelper.getDeviceById(deviceId);
+        logger.info("Preparing device information for: " + device.getDeviceSerial());
+//        // Get actionDevice
+        actionDevice = device;
 
         // Get installed applications
         this.doGetDeviceInstalledApplication();
@@ -125,6 +137,25 @@ public class DeviceController {
     }
 
     public Device getActionDevice() {
+        if(actionDevice != null){
+            logger.info("Action: " + actionDevice.getTotalCapacity());
+        }
         return actionDevice;
+    }
+
+    public String getSelectedAppid() {
+        return selectedAppid;
+    }
+
+    public void setSelectedAppid(String selectedAppid) {
+        this.selectedAppid = selectedAppid;
+    }
+
+    public String getSelectedDeviceSerial() {
+        return selectedDeviceSerial;
+    }
+
+    public void setSelectedDeviceSerial(String selectedDeviceSerial) {
+        this.selectedDeviceSerial = selectedDeviceSerial;
     }
 }

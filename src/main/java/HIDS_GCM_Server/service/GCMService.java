@@ -10,6 +10,7 @@ import org.jboss.solder.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 @Stateless
-public class GCMService {
+public class GCMService implements Serializable {
 
     @Inject
     Logger logger;
