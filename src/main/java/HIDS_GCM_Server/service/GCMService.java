@@ -1,6 +1,7 @@
 package HIDS_GCM_Server.service;
 
 import HIDS_GCM_Server.model.Device;
+import HIDS_GCM_Server.model.DeviceApplication;
 import HIDS_GCM_Server.util.CommonUtil;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
@@ -56,11 +57,13 @@ public class GCMService implements Serializable {
     /**
      * Scan application
      * @param device
-     * @param processName
+     * @param application
      */
-    public void doScanApplication(Device device, String processName){
+    public void doScanApplication(Device device, DeviceApplication application){
+
         params = new HashMap<String, String>();
-        params.put("processName", processName);
+        params.put("processName", application.getProcessName());
+        logger.info("GCM ID: " + device.getGcmRegistrationId());
         this.sendMessage(device.getGcmRegistrationId(), CommonUtil.deviceActionMonitoringApp, params);
     }
 

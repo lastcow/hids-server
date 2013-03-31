@@ -187,16 +187,7 @@
                                             <f:facet name="header">Process</f:facet>
                                             <h:outputText value="#{runningApp.processName}" />
                                         </h:column>
-                                        <h:column>
-                                            <h:form prependId="false">
-                                                <span class="button-group compact">
-                                                    <h:commandLink action="#{deviceController.doScanApplication('a','b')}"
-                                                                   styleClass="button icon-swap with-tooltip" title="Scan Application">
-                                                        <f:ajax execute="@form" />
-                                                    </h:commandLink>
-                                                </span>
-                                            </h:form>
-                                        </h:column>
+
                                     </h:dataTable>
                                 </div>
                             </div>

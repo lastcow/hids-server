@@ -83,7 +83,7 @@ public class DeviceController implements Serializable {
     public void doScanApplication(){
 
         logger.info("Scan requested for process: " + selectedAppid + " on device: " + selectedDeviceSerial);
-//        gcmService.doScanApplication(deviceDbHelper.getDeviceById(deviceId), appProcessName);
+        gcmService.doScanApplication(deviceDbHelper.getDeviceById(selectedDeviceSerial), deviceDbHelper.getDeviceApplicationById(selectedAppid));
     }
 
     /**

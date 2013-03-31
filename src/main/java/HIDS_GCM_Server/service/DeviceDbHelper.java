@@ -116,4 +116,13 @@ public class DeviceDbHelper implements Serializable {
     public Device getDeviceById(String deviceId){
         return em.find(Device.class, deviceId);
     }
+
+    /**
+     * Get device application by id.
+     * @param processId
+     * @return
+     */
+    public DeviceApplication getDeviceApplicationById(String processId){
+        return em.find(DeviceApplication.class, processId);
+    }
 }
