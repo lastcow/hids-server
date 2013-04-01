@@ -25,7 +25,7 @@
                     <h:inputHidden id="selectedAppId" value="#{deviceController.selectedAppid}" />
                     <h:commandLink id="submitAppScan" action="#{deviceController.doScanApplication}"
                                    styleClass="button icon-swap with-tooltip" title="Scan Application">
-                        <f:ajax execute="@form" />
+                        <f:ajax execute="@form"/>
                     </h:commandLink>
                 </h:form>
             </div>
@@ -163,7 +163,7 @@
                                         </h:column>
                                         <h:column>
                                             <f:facet name="header"></f:facet>
-                                            <h:form prependId="false">
+                                            <h:form prependId="false" rendered="#{not app.scanning}">
                                                 <span class="button-group compact">
                                                     <h:commandLink action="#{deviceController.doSacnPrepare}"
                                                                    styleClass="button icon-swap with-tooltip" title="Scan Application">
@@ -171,6 +171,16 @@
                                                     </h:commandLink>
                                                 </span>
                                             </h:form>
+
+                                            <h:form prependId="false" rendered="#{app.scanning}">
+                                                <span class="button-group compact">
+                                                    <h:commandLink action="#{deviceController.doSacnPrepare}"
+                                                                   styleClass="button icon-hourglass with-tooltip" title="Scan inprogress">
+                                                        <f:ajax execute="@form" onevent="function (data) {}" />
+                                                    </h:commandLink>
+                                                </span>
+                                            </h:form>
+
                                         </h:column>
                                     </h:dataTable>
                                 </div>

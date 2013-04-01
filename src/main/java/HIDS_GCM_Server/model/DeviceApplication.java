@@ -21,6 +21,8 @@ public class DeviceApplication implements Serializable {
 
     private String processName;
 
+    private boolean scanning;
+
 	@Column(name="package")
 	private String appPackage;
 
@@ -91,5 +93,13 @@ public class DeviceApplication implements Serializable {
 
     public void setProcessName(String processName) {
         this.processName = processName;
+    }
+
+    public boolean isScanning() {
+        return scanning;
+    }
+
+    public void setScanning(boolean scanning) {
+        this.scanning = scanning;
     }
 }

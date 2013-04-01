@@ -125,4 +125,18 @@ public class DeviceDbHelper implements Serializable {
     public DeviceApplication getDeviceApplicationById(String processId){
         return em.find(DeviceApplication.class, processId);
     }
+
+    /**
+     * Update Application scanning flag.
+     * @param processId
+     * @param scanning
+     */
+    public void updateApplicationScanning(String processId, boolean scanning){
+        DeviceApplication deviceApplication = em.find(DeviceApplication.class, processId);
+        if(deviceApplication != null){
+            deviceApplication.setScanning(scanning);
+            // Update db.
+            em.merge(deviceApplication);
+        }
+    }
 }

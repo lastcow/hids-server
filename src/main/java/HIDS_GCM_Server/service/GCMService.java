@@ -3,6 +3,7 @@ package HIDS_GCM_Server.service;
 import HIDS_GCM_Server.model.Device;
 import HIDS_GCM_Server.model.DeviceApplication;
 import HIDS_GCM_Server.util.CommonUtil;
+import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
@@ -29,13 +30,16 @@ public class GCMService implements Serializable {
     Logger logger;
     Map<String, String> params;
 
+    @Inject
+    DeviceDbHelper deviceDbHelper;
+
     /**
      * Send action to retrieve device's information
      * @param device
      */
     public void doGetDeviceInfo(Device device){
 
-        this.sendMessage(device.getGcmRegistrationId(), CommonUtil.deviceActionGetInfo, null);
+        this.sendMessage(device.getGcmRegistrationId(), null, CommonUtil.deviceActionGetInfo, null);
     }
 
     /**
@@ -43,7 +47,7 @@ public class GCMService implements Serializable {
      * @param device
      */
     public void doGetDeviceInstalledApplications(Device device){
-        this.sendMessage(device.getGcmRegistrationId(), CommonUtil.deviceActionGetInstalledApps, null);
+        this.sendMessage(device.getGcmRegistrationId(), null, CommonUtil.deviceActionGetInstalledApps, null);
     }
 
     /**
@@ -51,7 +55,7 @@ public class GCMService implements Serializable {
      * @param device
      */
     public void doGetDeviceRunningApplications(Device device){
-        this.sendMessage(device.getGcmRegistrationId(), CommonUtil.deviceActionGetRunningApps, null);
+        this.sendMessage(device.getGcmRegistrationId(), null, CommonUtil.deviceActionGetRunningApps, null);
     }
 
     /**
@@ -64,7 +68,7 @@ public class GCMService implements Serializable {
         params = new HashMap<String, String>();
         params.put("processName", application.getProcessName());
         logger.info("GCM ID: " + device.getGcmRegistrationId());
-        this.sendMessage(device.getGcmRegistrationId(), CommonUtil.deviceActionMonitoringApp, params);
+        this.sendMessage(device.getGcmRegistrationId(), application.getId(), CommonUtil.deviceActionMonitoringApp, params);
     }
 
     /**
@@ -73,7 +77,7 @@ public class GCMService implements Serializable {
      * @param action
      * @param params
      */
-    private void sendMessage(String deviceId, String action, Map<String, String> params){
+    private void sendMessage(String deviceId, String processId,  String action, Map<String, String> params){
         // Start sending message
         Sender sender = new Sender(CommonUtil.sendId);
         Message.Builder builder = new Message.Builder();
@@ -86,11 +90,27 @@ public class GCMService implements Serializable {
         }
         // Build
         Message message = builder.build();
+        boolean isSend = true;
         try {
             Result result = sender.send(message, deviceId, 5);
-            logger.info("MESSAGE ID: "  + result.getMessageId());
+            String error = result.getErrorCodeName();
+            if(result.getCanonicalRegistrationId() != null){
+                // Replace device gcmRegId with this.
+            }
+
+            if(error != null && error.equals(Constants.ERROR_NOT_REGISTERED)){
+                // Application removed from device. Delete from DB as well.
+                isSend = false;
+            }
+
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            isSend = false;
+        }
+
+        // Update db for scanning flag.
+        if( isSend && action.equals(CommonUtil.deviceActionMonitoringApp)){
+            deviceDbHelper.updateApplicationScanning(processId, true);
         }
     }
 }
