@@ -153,3 +153,19 @@ function prepareScanAppData(data, appId){
     }
 }
 
+/**
+ * Refresh data table.
+ * @param data
+ */
+function refreshDeviceDetail(data){
+    if(data.status == "begin"){
+        // Loading...
+    }else if(data.status == "success"){
+        // Init table style
+        initTblInstalledApps();
+        initTblRunningApps();
+    }else if(data.status == "complete"){
+        // Complete.
+    }
+}
+

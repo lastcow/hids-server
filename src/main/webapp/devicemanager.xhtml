@@ -25,7 +25,7 @@
                     <h:inputHidden id="selectedAppId" value="#{deviceController.selectedAppid}" />
                     <h:commandLink id="submitAppScan" action="#{deviceController.doScanApplication}"
                                    styleClass="button icon-swap with-tooltip" title="Scan Application">
-                        <f:ajax execute="@form"/>
+                        <f:ajax execute="@form" onevent="function (data) {refreshDeviceDetail(data)}" render=":divApps" />
                     </h:commandLink>
                 </h:form>
             </div>
@@ -102,12 +102,12 @@
                         <div class="facts clearfix">
                             <div class="fact">
 							<span class="fact-value">
-								<h:outputText value="#{deviceController.actionDevice.usedCapacity*100/deviceController.actionDevice.totalCapacity}">
+								<h:outputText value="#{deviceApplicationProducer.device.usedCapacity*100/deviceApplicationProducer.device.totalCapacity}">
                                     <f:convertNumber maxFractionDigits="0" />
 								</h:outputText> <span class="fact-unit">%</span>
 							</span>
                                 disk used over<br />
-                                <span class="fact-progress green"><h:outputText value="#{deviceController.actionDevice.totalCapacity}" >
+                                <span class="fact-progress green"><h:outputText value="#{deviceApplicationProducer.device.totalCapacity}" >
                                         <f:convertNumber />
                                     </h:outputText>GB
                                 </span>
@@ -120,7 +120,7 @@
                                 apps affected over<br />
                                 <span class="fact-progress green">
                                     <h:outputText
-                                        value="#{deviceController.deviceInstalledApplicationList.size()}">
+                                        value="#{deviceApplicationProducer.installApplicationList.size()}">
                                     <f:convertNumber  />
                                 </h:outputText> Apps</span>
                             </div>
@@ -137,16 +137,16 @@
                             </ul>
 
                             <h:form prependId="false">
-                                <h:inputHidden id="installedAppsCnt" value="#{deviceController.deviceInstalledApplicationList.size()}">
+                                <h:inputHidden id="installedAppsCnt" value="#{deviceApplicationProducer.installApplicationList.size()}">
                                     <f:convertNumber />
                                 </h:inputHidden>
-                                <h:inputHidden id="runningAppsCnt" value="#{deviceController.deviceRunningApplicationList.size()}">
+                                <h:inputHidden id="runningAppsCnt" value="#{deviceApplicationProducer.runningApplicationList.size()}">
                                     <f:convertNumber />
                                 </h:inputHidden>
                             </h:form>
                             <div class="tabs-content">
                                 <div id="tab-1" class="with-padding">
-                                    <h:dataTable id="tblInstalledApps" prependId="false" value="#{deviceController.deviceInstalledApplicationList}" var="app"
+                                    <h:dataTable id="tblInstalledApps" prependId="false" value="#{deviceApplicationProducer.installApplicationList}" var="app"
                                                  styleClass="table responsive-table"
                                                  columnClasses="columnInstalledAppInfected, null, null, columnInstalledAppActions">
                                         <h:column>
@@ -167,7 +167,7 @@
                                                 <span class="button-group compact">
                                                     <h:commandLink action="#{deviceController.doSacnPrepare}"
                                                                    styleClass="button icon-swap with-tooltip" title="Scan Application">
-                                                        <f:ajax execute="@form" onevent="function (data) {prepareScanAppData(data, '#{app.id}')}" />
+                                                        <f:ajax execute="@form" onevent="function (data) {prepareScanAppData(data, '#{app.id}')}"  />
                                                     </h:commandLink>
                                                 </span>
                                             </h:form>
@@ -176,7 +176,7 @@
                                                 <span class="button-group compact">
                                                     <h:commandLink action="#{deviceController.doSacnPrepare}"
                                                                    styleClass="button icon-hourglass with-tooltip" title="Scan inprogress">
-                                                        <f:ajax execute="@form" onevent="function (data) {}" />
+                                                        <f:ajax execute="@form" onevent="function (data) {}" render=":tblInstalledApps" />
                                                     </h:commandLink>
                                                 </span>
                                             </h:form>
@@ -187,7 +187,7 @@
 
                                 <div id="tab-2" class="with-padding" style="display:none;">
                                     <!--Simple table for running applications-->
-                                    <h:dataTable id="tblRunningApps" prependId="false" value="#{deviceController.deviceRunningApplicationList}" var="runningApp"
+                                    <h:dataTable id="tblRunningApps" prependId="false" value="#{deviceApplicationProducer.runningApplicationList}" var="runningApp"
                                                  styleClass="table responsive-table">
                                         <h:column>
                                             <f:facet name="header">Name</f:facet>

@@ -1,16 +1,15 @@
 package HIDS_GCM_Server.controller;
 
 import HIDS_GCM_Server.model.Device;
-import HIDS_GCM_Server.model.DeviceApplication;
 import HIDS_GCM_Server.service.DeviceDbHelper;
 import HIDS_GCM_Server.service.GCMService;
 import org.jboss.solder.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,22 +35,19 @@ public class DeviceController implements Serializable {
 
     private List<Device> deviceList;
 
-    private List<DeviceApplication> deviceInstalledApplicationList;
-    private List<DeviceApplication> deviceRunningApplicationList;
-
     private Device actionDevice;
 
     private String selectedDeviceSerial;
     private String selectedAppid;
 
+    // Events
+    @Inject private Event<Device> deviceEvent;
+
     @PostConstruct
     public void postInit(){
-        logger.info("CALLED");
+
         // Get list of device.
         deviceList = deviceDbHelper.getDeviceList();
-
-        deviceInstalledApplicationList = new ArrayList<DeviceApplication>();
-        deviceRunningApplicationList = new ArrayList<DeviceApplication>();
 
     }
 
@@ -84,6 +80,8 @@ public class DeviceController implements Serializable {
 
         logger.info("Scan requested for process: " + selectedAppid + " on device: " + selectedDeviceSerial);
         gcmService.doScanApplication(deviceDbHelper.getDeviceById(selectedDeviceSerial), deviceDbHelper.getDeviceApplicationById(selectedAppid));
+
+        deviceEvent.fire(deviceDbHelper.getDeviceById(selectedDeviceSerial));
     }
 
     /**
@@ -100,40 +98,12 @@ public class DeviceController implements Serializable {
     public void doPrepareDetailedInformation(Device device){
 
         logger.info("Preparing device information for: " + device.getDeviceSerial());
-//        // Get actionDevice
-        actionDevice = device;
 
-        // Get installed applications
-        this.doGetDeviceInstalledApplication();
-
-        // Get running applications.
-        this.doGetDeviceRunningApplication();
-    }
-
-    /**
-     * Get device installed applications
-     */
-    private void doGetDeviceInstalledApplication(){
-        deviceInstalledApplicationList = actionDevice.getInstalledApplications();
-    }
-
-    /**
-     * Get device running applications
-     */
-    private void doGetDeviceRunningApplication(){
-        deviceRunningApplicationList = actionDevice.getRunningApplications();
+        deviceEvent.fire(device);
     }
 
     public List<Device> getDeviceList() {
         return deviceList;
-    }
-
-    public List<DeviceApplication> getDeviceInstalledApplicationList() {
-        return deviceInstalledApplicationList;
-    }
-
-    public List<DeviceApplication> getDeviceRunningApplicationList() {
-        return deviceRunningApplicationList;
     }
 
     public Device getActionDevice() {
