@@ -67,6 +67,7 @@ public class GCMService implements Serializable {
 
         params = new HashMap<String, String>();
         params.put("processName", application.getProcessName());
+        params.put("processId", application.getId());
         logger.info("GCM ID: " + device.getGcmRegistrationId());
         this.sendMessage(device.getGcmRegistrationId(), application.getId(), CommonUtil.deviceActionMonitoringApp, params);
     }

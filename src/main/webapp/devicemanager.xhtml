@@ -25,7 +25,7 @@
                     <h:inputHidden id="selectedAppId" value="#{deviceController.selectedAppid}" />
                     <h:commandLink id="submitAppScan" action="#{deviceController.doScanApplication}"
                                    styleClass="button icon-swap with-tooltip" title="Scan Application">
-                        <f:ajax execute="@form" onevent="function (data) {refreshDeviceDetail(data)}" render=":divApps" />
+                        <f:ajax execute="@form" onevent="function (data) {refreshDeviceDetail(data)}" render=":divApps :divDevices" />
                     </h:commandLink>
                 </h:form>
             </div>
@@ -34,7 +34,7 @@
                 <h1>Device list</h1>
             </hgroup>
 
-            <h:panelGroup layout="block" styleClass="with-padding">
+            <h:panelGroup id="divDevices" layout="block" styleClass="with-padding">
                 <h:form prependId="false">
                     <h:inputHidden value="#{deviceController.deviceList.size()}" id="deviceCnt" >
                         <f:convertNumber />
@@ -65,7 +65,7 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header">Infected</f:facet>
-                        <small class="tag green-bg">Clean</small>
+                        <small class="tag #{requestDataProducer.getBgClass(device.virusStatusBean.status)}">#{device.virusStatusBean.status}</small>
                     </h:column>
                     <h:column>
                         <f:facet name="header">Actions</f:facet>
@@ -151,7 +151,7 @@
                                                  columnClasses="columnInstalledAppInfected, null, null, columnInstalledAppActions">
                                         <h:column>
                                             <f:facet name="header">Virus</f:facet>
-                                            <small class="tag orange-bg">Unscan</small>
+                                            <small class="tag #{requestDataProducer.getBgClass(app.virusStatusBean.status)}"><h:outputText value="#{app.virusStatusBean.status}" /></small>
                                         </h:column>
                                         <h:column>
                                             <f:facet name="header">Name</f:facet>

@@ -4,7 +4,6 @@ import HIDS_GCM_Server.service.DeviceDbHelper;
 import org.jboss.solder.logging.Logger;
 
 import javax.enterprise.inject.Model;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 /**
@@ -17,8 +16,6 @@ import javax.inject.Inject;
 @Model
 public class DeviceRegistrationController {
 
-    @Inject
-    private FacesContext facesContext;
     @Inject
     private Logger logger;
 

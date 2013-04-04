@@ -1,7 +1,8 @@
 package HIDS_GCM_Server.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 
@@ -32,8 +33,12 @@ public class Device implements Serializable {
 
 	private String manufacturer;
 
-    private int totalCapacity;
-    private int usedCapacity;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date registerDate;
+
+	private int totalCapacity;
+
+	private int usedCapacity;
 
 	//bi-directional many-to-one association to DeviceApplication
 	@OneToMany(mappedBy="device1", fetch = FetchType.EAGER, cascade={CascadeType.ALL})
@@ -43,6 +48,10 @@ public class Device implements Serializable {
 	@OneToMany(mappedBy="device2", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	private List<DeviceApplication> installedApplications;
 
+	//bi-directional many-to-one association to VirusStatus
+	@ManyToOne
+	@JoinColumn(name="VirusStatus")
+	private VirusStatus virusStatusBean;
 
 	public Device() {
 	}
@@ -119,6 +128,30 @@ public class Device implements Serializable {
 		this.manufacturer = manufacturer;
 	}
 
+	public Date getRegisterDate() {
+		return this.registerDate;
+	}
+
+	public void setRegisterDate(Date registerDate) {
+		this.registerDate = registerDate;
+	}
+
+	public int getTotalCapacity() {
+		return this.totalCapacity;
+	}
+
+	public void setTotalCapacity(int totalCapacity) {
+		this.totalCapacity = totalCapacity;
+	}
+
+	public int getUsedCapacity() {
+		return this.usedCapacity;
+	}
+
+	public void setUsedCapacity(int usedCapacity) {
+		this.usedCapacity = usedCapacity;
+	}
+
 	public List<DeviceApplication> getRunningApplications() {
 		return this.runningApplications;
 	}
@@ -135,20 +168,12 @@ public class Device implements Serializable {
 		this.installedApplications = installedApplications;
 	}
 
-    public int getTotalCapacity() {
-        return totalCapacity;
-    }
+	public VirusStatus getVirusStatusBean() {
+		return this.virusStatusBean;
+	}
 
-    public void setTotalCapacity(int totalCapacity) {
-        this.totalCapacity = totalCapacity;
-    }
-
-    public int getUsedCapacity() {
-        return usedCapacity;
-    }
-
-    public void setUsedCapacity(int usedCapacity) {
-        this.usedCapacity = usedCapacity;
-    }
+	public void setVirusStatusBean(VirusStatus virusStatusBean) {
+		this.virusStatusBean = virusStatusBean;
+	}
 
 }

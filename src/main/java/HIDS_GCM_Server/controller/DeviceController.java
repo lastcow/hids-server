@@ -3,6 +3,7 @@ package HIDS_GCM_Server.controller;
 import HIDS_GCM_Server.model.Device;
 import HIDS_GCM_Server.service.DeviceDbHelper;
 import HIDS_GCM_Server.service.GCMService;
+import HIDS_GCM_Server.util.CommonUtil;
 import org.jboss.solder.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -79,9 +80,21 @@ public class DeviceController implements Serializable {
     public void doScanApplication(){
 
         logger.info("Scan requested for process: " + selectedAppid + " on device: " + selectedDeviceSerial);
-        gcmService.doScanApplication(deviceDbHelper.getDeviceById(selectedDeviceSerial), deviceDbHelper.getDeviceApplicationById(selectedAppid));
+        Device device = deviceDbHelper.getDeviceById(selectedDeviceSerial);
+        gcmService.doScanApplication(device, deviceDbHelper.getDeviceApplicationById(selectedAppid));
 
+        // Update application scan status.
+        deviceDbHelper.updateApplicationScanning(selectedAppid, true);
+        // Update the application status.
+        deviceDbHelper.updateApplicationVirusStatus(selectedAppid, CommonUtil.virus_scanning);
+        // Update the device status.
+        deviceDbHelper.updateDeviceVirusStatus(deviceDbHelper.getDeviceById(selectedDeviceSerial), CommonUtil.virus_scanning);
+
+        // Reget device here
         deviceEvent.fire(deviceDbHelper.getDeviceById(selectedDeviceSerial));
+
+        // Reload device list.
+        this.postInit();
     }
 
     /**

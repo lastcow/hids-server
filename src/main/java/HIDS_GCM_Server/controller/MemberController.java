@@ -6,8 +6,6 @@ import HIDS_GCM_Server.service.MemberRegistration;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -18,8 +16,8 @@ import javax.inject.Named;
 @Model
 public class MemberController {
 
-   @Inject
-   private FacesContext facesContext;
+//   @Inject
+//   private FacesContext facesContext;
 
    @Inject
    private MemberRegistration memberRegistration;
@@ -34,7 +32,7 @@ public class MemberController {
 
    public void register() throws Exception {
       memberRegistration.register(newMember);
-      facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful"));
+//      facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful"));
       initNewMember();
    }
 

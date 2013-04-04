@@ -15,4 +15,9 @@ public class CommonUtil {
     public static final String deviceActionGetInstalledApps = "getInstalledApps";
     public static final String deviceActionGetRunningApps = "getRunningApps";
     public static final String deviceActionMonitoringApp = "monitorRunningApps";
+
+    public static final String virus_unknow = "unknow";
+    public static final String virus_clear = "clear";
+    public static final String virus_scanning = "scanning";
+    public static final String virus_infect = "infect";
 }

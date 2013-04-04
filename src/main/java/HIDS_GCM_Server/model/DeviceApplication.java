@@ -17,14 +17,18 @@ public class DeviceApplication implements Serializable {
 
 	private String name;
 
-    private String versionNumber;
-
-    private String processName;
-
-    private boolean scanning;
-
 	@Column(name="package")
 	private String appPackage;
+
+	private String processName;
+
+	private boolean scanning;
+
+	private String signature;
+
+	private String versionName;
+
+    private String versionNumber;
 
 	//bi-directional many-to-one association to Device
 	@ManyToOne
@@ -35,6 +39,11 @@ public class DeviceApplication implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="deviceSerialInstalled")
 	private Device device2;
+
+	//bi-directional many-to-one association to VirusStatus
+	@ManyToOne
+	@JoinColumn(name="VirusStatus")
+	private VirusStatus virusStatusBean;
 
 	public DeviceApplication() {
 	}
@@ -63,6 +72,38 @@ public class DeviceApplication implements Serializable {
 		this.appPackage = appPackage;
 	}
 
+	public String getProcessName() {
+		return this.processName;
+	}
+
+	public void setProcessName(String processName) {
+		this.processName = processName;
+	}
+
+	public boolean getScanning() {
+		return this.scanning;
+	}
+
+	public void setScanning(boolean scanning) {
+		this.scanning = scanning;
+	}
+
+	public String getSignature() {
+		return this.signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+
+	public String getVersionName() {
+		return this.versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
+	}
+
 	public Device getDevice1() {
 		return this.device1;
 	}
@@ -79,27 +120,19 @@ public class DeviceApplication implements Serializable {
 		this.device2 = device2;
 	}
 
+	public VirusStatus getVirusStatusBean() {
+		return this.virusStatusBean;
+	}
+
+	public void setVirusStatusBean(VirusStatus virusStatusBean) {
+		this.virusStatusBean = virusStatusBean;
+	}
+
     public String getVersionNumber() {
         return versionNumber;
     }
 
     public void setVersionNumber(String versionNumber) {
         this.versionNumber = versionNumber;
-    }
-
-    public String getProcessName() {
-        return processName;
-    }
-
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    public boolean isScanning() {
-        return scanning;
-    }
-
-    public void setScanning(boolean scanning) {
-        this.scanning = scanning;
     }
 }

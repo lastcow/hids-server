@@ -1,8 +1,11 @@
 package HIDS_GCM_Server.rest;
 
+import HIDS_GCM_Server.model.ApplicationAck;
 import HIDS_GCM_Server.model.Device;
 import HIDS_GCM_Server.model.DeviceApplication;
+import HIDS_GCM_Server.model.VirusStatus;
 import HIDS_GCM_Server.service.DeviceDbHelper;
+import HIDS_GCM_Server.util.CommonUtil;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -22,10 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,6 +61,8 @@ public class DeviceActionRESTService {
         Device device = new Device();
         device.setGcmRegistrationId(gcmRegId);
         device.setDeviceSerial(deviceSerial);
+        device.setRegisterDate(new Date());
+        device.setVirusStatusBean(deviceDbHelper.getVirusStatusByStatus(CommonUtil.virus_unknow));
         try {
             deviceDbHelper.register(device);
         } catch (Exception e) {
@@ -85,6 +87,18 @@ public class DeviceActionRESTService {
         logger.info("Logfile added");
 
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        List<InputPart> idInputParts = uploadForm.get("processId");
+        String processId = null;
+        for(InputPart inputPart : idInputParts){
+            try {
+                processId = inputPart.getBodyAsString();
+                // Update db.
+                deviceDbHelper.updateApplicationScanning(processId, false);
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
         List<InputPart> inputParts = uploadForm.get("logfile");
         String fileName = null;
         for(InputPart inputPart : inputParts){
@@ -176,6 +190,9 @@ public class DeviceActionRESTService {
         String[] appProperties = null;
         DeviceApplication deviceApplication = null;
         List<DeviceApplication> deviceApplicationList = new ArrayList<DeviceApplication>();
+
+        // Unknow status for virus now.
+        VirusStatus vStatusUnknow = deviceDbHelper.getVirusStatusByStatus(CommonUtil.virus_unknow);
         for(String app : applications){
             app = app.replace("[", "");
             app = app.replace("]", "");
@@ -187,6 +204,16 @@ public class DeviceActionRESTService {
             deviceApplication.setName(appProperties[3].trim());
             deviceApplication.setId(UUID.randomUUID().toString().toUpperCase());
             deviceApplication.setDevice2(device);
+            deviceApplication.setVirusStatusBean(vStatusUnknow);
+            // All apk have signature.
+            deviceApplication.setSignature(appProperties[4].trim());
+
+            // TODO Check with ApplicationAck table for the first filter.
+            ApplicationAck applicationAck = deviceDbHelper.getApplicationAckBySignature(appProperties[4].trim());
+            if(applicationAck != null){
+                // Set the status.
+                deviceApplication.setVirusStatusBean(applicationAck.getVirusStatusBean());
+            }
             deviceApplicationList.add(deviceApplication);
 
         }

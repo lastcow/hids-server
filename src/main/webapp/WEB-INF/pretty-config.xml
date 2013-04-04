@@ -1,0 +1,16 @@
+<pretty-config xmlns="http://ocpsoft.org/prettyfaces/3.3.3"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://ocpsoft.org/prettyfaces/3.3.3
+               http://ocpsoft.org/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.3.xsd">
+
+    <url-mapping id="devicemanager">
+        <pattern value="/dmanager" />
+        <view-id value="/devicemanager.jsf" />
+    </url-mapping>
+    
+    <url-mapping id="systemsettings">
+        <pattern value="/systemsettings"></pattern>
+        <view-id value="/systemsettings.jsf"/>
+    </url-mapping>
+
+</pretty-config>

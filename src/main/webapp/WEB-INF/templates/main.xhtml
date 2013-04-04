@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:pretty="http://ocpsoft.com/prettyfaces">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -132,8 +132,8 @@
 
                 <section class="navigable">
                     <ul class="big-menu">
-                        <li><h:link outcome="devicemanager">Device Management</h:link></li>
-                        <li><h:link outcome="systemsettings">System Settings</h:link></li>
+                        <li><pretty:link mappingId="dmanager">Device Manager</pretty:link></li>
+                        <li><pretty:link mappingId="systemsettings">System Settings</pretty:link></li>
                     </ul>
                 </section>
 

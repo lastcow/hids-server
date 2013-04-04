@@ -1,14 +1,18 @@
 package HIDS_GCM_Server.service;
 
+import HIDS_GCM_Server.model.ApplicationAck;
 import HIDS_GCM_Server.model.Device;
 import HIDS_GCM_Server.model.DeviceApplication;
+import HIDS_GCM_Server.model.VirusStatus;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -40,6 +44,7 @@ public class DeviceDbHelper implements Serializable {
             em.persist(device);
         }else{
             savedDevice.setGcmRegistrationId(device.getGcmRegistrationId());
+            savedDevice.setRegisterDate(new Date());
             em.merge(savedDevice);
         }
 
@@ -56,6 +61,8 @@ public class DeviceDbHelper implements Serializable {
         if(savedDevice != null){
             // Update
             device.setGcmRegistrationId(savedDevice.getGcmRegistrationId());
+            device.setRegisterDate(savedDevice.getRegisterDate());
+            device.setVirusStatusBean(savedDevice.getVirusStatusBean());
             em.merge(device);
         }else{
             em.persist(device);
@@ -118,6 +125,33 @@ public class DeviceDbHelper implements Serializable {
     }
 
     /**
+     * Get VirusStatus by status.
+     * @param status
+     * @return
+     */
+    public VirusStatus getVirusStatusByStatus(String status){
+        Query query = em.createNamedQuery("getVirusStatusByStatus").setParameter("status", status);
+
+        return (VirusStatus) query.getSingleResult();
+    }
+
+    /**
+     * Get ApplicationAck by signature
+     * @param signature
+     * @return
+     */
+    public ApplicationAck getApplicationAckBySignature(String signature){
+        ApplicationAck appAck = null;
+        Query query = em.createNamedQuery("getAppAckBySignature").setParameter("signature", signature);
+        try{
+            appAck = (ApplicationAck) query.getSingleResult();
+        }catch(NoResultException nre){
+            // no result found.
+        }
+        return appAck;
+    }
+
+    /**
      * Get device application by id.
      * @param processId
      * @return
@@ -132,11 +166,38 @@ public class DeviceDbHelper implements Serializable {
      * @param scanning
      */
     public void updateApplicationScanning(String processId, boolean scanning){
-        DeviceApplication deviceApplication = em.find(DeviceApplication.class, processId);
+        DeviceApplication deviceApplication = this.getDeviceApplicationById(processId);
         if(deviceApplication != null){
             deviceApplication.setScanning(scanning);
             // Update db.
             em.merge(deviceApplication);
+        }
+    }
+
+    /**
+     * Update application's virus status.
+     * @param processId
+     * @param status
+     */
+    public void updateApplicationVirusStatus(String processId, String status){
+        System.out.println("=======");
+        DeviceApplication deviceApplication = this.getDeviceApplicationById(processId);
+        System.out.println("Status :" + deviceApplication.getName());
+        if(deviceApplication != null){
+            deviceApplication.setVirusStatusBean(this.getVirusStatusByStatus(status));
+            em.merge(deviceApplication);
+        }
+    }
+
+    /**
+     * Update device status.
+     * @param device
+     * @param status
+     */
+    public void updateDeviceVirusStatus(Device device, String status){
+        if(device != null){
+            device.setVirusStatusBean(this.getVirusStatusByStatus(status));
+            em.merge(device);
         }
     }
 }

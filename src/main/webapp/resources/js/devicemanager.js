@@ -11,6 +11,13 @@ function initComponent(){
 
     $.template.init();
 
+    initTblDevices();
+
+
+}
+
+
+function initTblDevices(){
     // Datatable
     var tblDevice = $('#tblDevice');
 
@@ -40,11 +47,6 @@ function initComponent(){
             tableStyled = true;
         }
     });
-
-//    initTblInstalledApps();
-//    initTblRunningApps();
-
-
 }
 
 function initTblInstalledApps(){
@@ -162,6 +164,7 @@ function refreshDeviceDetail(data){
         // Loading...
     }else if(data.status == "success"){
         // Init table style
+        initTblDevices();
         initTblInstalledApps();
         initTblRunningApps();
     }else if(data.status == "complete"){
