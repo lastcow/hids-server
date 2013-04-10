@@ -18,17 +18,17 @@ public class DeviceApplication implements Serializable {
 	private String name;
 
 	@Column(name="package")
-	private String appPackage;
+	private String package_;
 
 	private String processName;
 
-	private boolean scanning;
+	private byte scanning;
 
 	private String signature;
 
 	private String versionName;
 
-    private String versionNumber;
+	private String versionNumber;
 
 	//bi-directional many-to-one association to Device
 	@ManyToOne
@@ -64,12 +64,12 @@ public class DeviceApplication implements Serializable {
 		this.name = name;
 	}
 
-	public String getAppPackage() {
-		return this.appPackage;
+	public String getPackage_() {
+		return this.package_;
 	}
 
-	public void setAppPackage(String appPackage) {
-		this.appPackage = appPackage;
+	public void setPackage_(String package_) {
+		this.package_ = package_;
 	}
 
 	public String getProcessName() {
@@ -80,11 +80,11 @@ public class DeviceApplication implements Serializable {
 		this.processName = processName;
 	}
 
-	public boolean getScanning() {
+	public byte getScanning() {
 		return this.scanning;
 	}
 
-	public void setScanning(boolean scanning) {
+	public void setScanning(byte scanning) {
 		this.scanning = scanning;
 	}
 
@@ -102,6 +102,14 @@ public class DeviceApplication implements Serializable {
 
 	public void setVersionName(String versionName) {
 		this.versionName = versionName;
+	}
+
+	public String getVersionNumber() {
+		return this.versionNumber;
+	}
+
+	public void setVersionNumber(String versionNumber) {
+		this.versionNumber = versionNumber;
 	}
 
 	public Device getDevice1() {
@@ -128,11 +136,4 @@ public class DeviceApplication implements Serializable {
 		this.virusStatusBean = virusStatusBean;
 	}
 
-    public String getVersionNumber() {
-        return versionNumber;
-    }
-
-    public void setVersionNumber(String versionNumber) {
-        this.versionNumber = versionNumber;
-    }
 }

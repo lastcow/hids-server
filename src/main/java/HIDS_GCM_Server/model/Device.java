@@ -40,6 +40,11 @@ public class Device implements Serializable {
 
 	private int usedCapacity;
 
+	//bi-directional many-to-one association to VirusStatus
+	@ManyToOne
+	@JoinColumn(name="VirusStatus")
+	private VirusStatus virusStatusBean;
+
 	//bi-directional many-to-one association to DeviceApplication
 	@OneToMany(mappedBy="device1", fetch = FetchType.EAGER, cascade={CascadeType.ALL})
 	private List<DeviceApplication> runningApplications;
@@ -47,11 +52,6 @@ public class Device implements Serializable {
 	//bi-directional many-to-one association to DeviceApplication
 	@OneToMany(mappedBy="device2", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	private List<DeviceApplication> installedApplications;
-
-	//bi-directional many-to-one association to VirusStatus
-	@ManyToOne
-	@JoinColumn(name="VirusStatus")
-	private VirusStatus virusStatusBean;
 
 	public Device() {
 	}
@@ -152,6 +152,14 @@ public class Device implements Serializable {
 		this.usedCapacity = usedCapacity;
 	}
 
+	public VirusStatus getVirusStatusBean() {
+		return this.virusStatusBean;
+	}
+
+	public void setVirusStatusBean(VirusStatus virusStatusBean) {
+		this.virusStatusBean = virusStatusBean;
+	}
+
 	public List<DeviceApplication> getRunningApplications() {
 		return this.runningApplications;
 	}
@@ -166,14 +174,6 @@ public class Device implements Serializable {
 
 	public void setInstalledApplications(List<DeviceApplication> installedApplications) {
 		this.installedApplications = installedApplications;
-	}
-
-	public VirusStatus getVirusStatusBean() {
-		return this.virusStatusBean;
-	}
-
-	public void setVirusStatusBean(VirusStatus virusStatusBean) {
-		this.virusStatusBean = virusStatusBean;
 	}
 
 }
