@@ -7,6 +7,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 
 import javax.ejb.Stateless;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,22 +19,33 @@ import javax.ejb.Stateless;
 @Stateless
 public class EmailService {
 
-    public void doSendSimpleEmail() throws EmailException {
+    /**
+     * With gmail account
+     * @throws EmailException
+     */
+    public void doSendSimpleEmail(String subject, String msg, List<String> toList) throws EmailException {
         Email email = new SimpleEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
         email.setAuthenticator(new DefaultAuthenticator("tucoscps@gmail.com", "TUcosc451"));
         email.setSSL(true);
-        email.setFrom("tucoscps@gmail.com");
-        email.setSubject("TestMail");
-        email.setMsg("This is a test mail ... :-)");
-        email.addTo("zhijiang@chen.me");
+        email.setFrom("tucoscps@gmail.com", "Security Monitoring System - TU");
+        email.setSubject(subject);
+        email.setMsg(msg);
+        if(toList != null){
+            for(String recept : toList){
+                email.addTo(recept);
+            }
+        }else{
+            // Send email to default
+            email.addTo("zhijiang@chen.me");
+        }
         email.send();
     }
 
     EmailService(){
         try {
-            this.doSendSimpleEmail();
+            this.doSendSimpleEmail("Testing", "Testing", null);
         } catch (EmailException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

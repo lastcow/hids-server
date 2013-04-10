@@ -5,6 +5,7 @@ import HIDS_GCM_Server.model.Device;
 import HIDS_GCM_Server.model.DeviceApplication;
 import HIDS_GCM_Server.model.VirusStatus;
 import HIDS_GCM_Server.service.DeviceDbHelper;
+import HIDS_GCM_Server.service.EmailService;
 import HIDS_GCM_Server.util.CommonUtil;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -45,6 +46,9 @@ public class DeviceActionRESTService {
     @Inject
     DeviceDbHelper deviceDbHelper;
 
+    @Inject
+    EmailService emailService;
+
     @POST
     @Path("/register")
     @Produces(MediaType.TEXT_HTML)
@@ -63,8 +67,13 @@ public class DeviceActionRESTService {
         device.setDeviceSerial(deviceSerial);
         device.setRegisterDate(new Date());
         device.setVirusStatusBean(deviceDbHelper.getVirusStatusByStatus(CommonUtil.virus_unknow));
+
+
         try {
             deviceDbHelper.register(device);
+
+            // Send email notification.
+            emailService.doSendSimpleEmail("Device registration", "Device registered with GCM ID: " + gcmRegId, null);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
