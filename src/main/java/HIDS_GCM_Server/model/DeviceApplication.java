@@ -18,11 +18,11 @@ public class DeviceApplication implements Serializable {
 	private String name;
 
 	@Column(name="package")
-	private String package_;
+	private String appPackage;
 
 	private String processName;
 
-	private byte scanning;
+	private boolean scanning;
 
 	private String signature;
 
@@ -64,12 +64,12 @@ public class DeviceApplication implements Serializable {
 		this.name = name;
 	}
 
-	public String getPackage_() {
-		return this.package_;
+	public String getAppPackage() {
+		return this.appPackage;
 	}
 
-	public void setPackage_(String package_) {
-		this.package_ = package_;
+	public void setAppPackage(String package_) {
+		this.appPackage = package_;
 	}
 
 	public String getProcessName() {
@@ -80,11 +80,11 @@ public class DeviceApplication implements Serializable {
 		this.processName = processName;
 	}
 
-	public byte getScanning() {
+	public boolean getScanning() {
 		return this.scanning;
 	}
 
-	public void setScanning(byte scanning) {
+	public void setScanning(boolean scanning) {
 		this.scanning = scanning;
 	}
 
