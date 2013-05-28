@@ -43,12 +43,8 @@ public class EmailService {
         email.send();
     }
 
-    EmailService(){
-        try {
-            this.doSendSimpleEmail("Testing", "Testing", null);
-        } catch (EmailException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public EmailService(){
+        // Do nothing.
     }
 
     public static void main(String[] args){
